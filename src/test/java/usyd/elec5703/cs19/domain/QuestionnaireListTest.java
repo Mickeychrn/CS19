@@ -46,6 +46,17 @@ public class QuestionnaireListTest {
 	
 	
 	@Test
+	public void testGetandSetUsername() {
+		QuestionnaireList qList = new QuestionnaireList("1", "1", "des", "value","name");
+		String qString =qList.getUsername();
+		assertEquals("name", qString);
+		qList.setUsername("username");
+		assertEquals("QuestionnaireList [id=1, questionnaireid=1, descriptions=des, values=value]", qList.toString());
+		
+	}
+	
+	
+	@Test
 	public void testGetandSettostring() {
 		QuestionnaireList qList  = new QuestionnaireList("1", "1", "des", "value");
 		assertEquals("QuestionnaireList [id=1, questionnaireid=1, descriptions=des, values=value]", qList.toString());

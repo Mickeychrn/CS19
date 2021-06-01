@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -44,6 +43,31 @@ public class MappingController {
 	public String mappingUpload() {
 		return "pageupload";
 	}
+	
+	
+	@RequestMapping(value = "mapping/predictsave", method = RequestMethod.POST)
+	public ModelAndView mappingPredictSave(HttpServletRequest request) {
+		String[] arr_label = request.getParameterValues("arr_label[]");
+		String[] arr_number = request.getParameterValues("arr_number[]");
+		Tools tools = new Tools();
+		String descriptions = tools.arrayToString(arr_label);
+		String values = tools.arrayToString(arr_number);
+
+		
+		try {
+
+			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
+			MongoCollection<Document> collection = mongoDatabase.getCollection("prediction");
+			Document document = new Document("descriptions", descriptions).append("values", values);
+			collection.insertOne(document);
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		
+		
+		return null;
+		
+	}
 
 	@RequestMapping(value = "mapping/collectdata/{id}", method = RequestMethod.GET)
 	public ModelAndView userCollectData(@PathVariable("id") String id) {
@@ -56,9 +80,6 @@ public class MappingController {
 		String description = "";
 		Questionnaire questionnaire = new Questionnaire();
 		try {
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-//			MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 
 			BasicDBObject queryObject = new BasicDBObject("_id", new ObjectId(id));
@@ -98,8 +119,6 @@ public class MappingController {
 		
 		
 		try {
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("questionnairelist");
@@ -122,9 +141,6 @@ public class MappingController {
 		List<Questionnaire> list = new ArrayList<Questionnaire>();
 
 		try {
-
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("questionnaire");
@@ -157,9 +173,6 @@ public class MappingController {
 		List<Questionnaire> list = new ArrayList<Questionnaire>();
 
 		try {
-
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("questionnaire");
@@ -195,12 +208,7 @@ public class MappingController {
 		String tablehead = "";
 		try {
 
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
-
-//			BasicDBObject queryObject = new BasicDBObject("questionnaireid", new ObjectId(id));
 			MongoCollection<Document> collection = mongoDatabase.getCollection("questionnairelist");
 			FindIterable<Document> findIterable = collection.find(new Document("questionnaireid",id));
 			MongoCursor<Document> mongoCursor = findIterable.iterator();
@@ -214,7 +222,6 @@ public class MappingController {
 				String username = document.get("username").toString();
 				tablehead = descriptions;
 				QuestionnaireList questionnaireList =  new QuestionnaireList(idid, questionnaireid, descriptions, values,username);
-//				System.out.println(questionnaireList.toString());
 				list.add(questionnaireList);
 			}
 
@@ -261,9 +268,6 @@ public class MappingController {
 		double a = sumA / (rows.length - 1);
 		double b = sumB / (rows.length - 1);
 
-//		for (double[] ds : arr) {
-//			System.out.println(Arrays.toString(ds));
-//		}
 		double[] result = null;
 		MappingClustering mappingClustering = new MappingClustering();
 		MappingMDS mappingMDS = new MappingMDS();
@@ -294,12 +298,8 @@ public class MappingController {
 		String[] head = rows[0].split(",", 2);
 		String numberSpace = tools.doublrToString(result);
 		String psychometricSpace = head[1];
-//		System.out.println(numberSpace);
-//		System.out.println(psychometricSpace);
 
 		try {
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("Mapping");
@@ -332,8 +332,6 @@ public class MappingController {
 		String description = tools.arrayToString(psyArr);
 
 		try {
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("questionnaire");
@@ -354,8 +352,6 @@ public class MappingController {
 
 		try {
 
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("Mapping");
@@ -389,9 +385,6 @@ public class MappingController {
 		Data data = new Data();
 		try {
 
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 
 			BasicDBObject queryObject = new BasicDBObject("_id", new ObjectId(id));
@@ -405,7 +398,7 @@ public class MappingController {
 				numericSpace = document.get("numberSpace").toString();
 				algorithmtype = document.get("algorithm").toString();
 				data = new Data(idString, psychometricSpace, numericSpace, algorithmtype);
-//				System.out.println(idString);
+
 			}
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -447,9 +440,6 @@ public class MappingController {
 		double a = sumA / (rows.length - 1);
 		double b = sumB / (rows.length - 1);
 
-//		for (double[] ds : arr) {
-//			System.out.println(Arrays.toString(ds));
-//		}
 		double[] result = null;
 		MappingClustering mappingClustering = new MappingClustering();
 		MappingMDS mappingMDS = new MappingMDS();
@@ -480,12 +470,8 @@ public class MappingController {
 		String[] head = rows[0].split(",", 2);
 		String numberSpace = tools.doublrToString(result);
 		String psychometricSpace = head[1];
-//		System.out.println(numberSpace);
-//		System.out.println(psychometricSpace);
 
 		try {
-//			com.mongodb.client.MongoClient mongoClient = MongoClients.create(
-//					"mongodb+srv://hao:c1SkRR0inlNhjqWF@cluster0.ap9gn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("Mapping");
